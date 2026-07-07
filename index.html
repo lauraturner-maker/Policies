@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="widget-name" content="FedEx Freight Policy Library">
+  <meta name="widget-description" content="Searchable library of FedEx Freight SOP and policy documents, filterable by department with adoption metrics.">
+  <meta name="widget-tags" content="File Management, Operations, Freight">
+  <title>FedEx Freight Policy Library</title>
+  <style>
+    :root {
+      --primary: var(--sb-brand, #4D148C);
+      --accent: #FF6600;
+      --success: #10b981;
+      --warning: #FF6600;
+      --danger: #ef4444;
+      --text: #1f2937;
+      --text-light: #6b7280;
+      --bg: #ffffff;
+      --bg-gray: #f9fafb;
+      --border: #e5e7eb;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary: var(--sb-brand, #a06fd6);
+        --accent: #ff8c3d;
+        --success: #34d399;
+        --warning: #ff8c3d;
+        --danger: #f87171;
+        --text: #f3f4f6;
+        --text-light: #9ca3af;
+        --bg: #1f2937;
+        --bg-gray: #111827;
+        --border: #374151;
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-gray);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .cw-main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 24px 48px;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (min-width: 1024px) {
+      .cw-main { flex-direction: row; gap: 32px; align-items: flex-start; }
+    }
+
+    .cw-content { flex: 1; display: flex; flex-direction: column; gap: 40px; padding-top: 16px; }
+    .cw-sidebar { display: flex; flex-direction: column; gap: 24px; padding-top: 16px; }
+    @media (min-width: 1024px) { .cw-sidebar { width: 310px; flex-shrink: 0; } }
+
+    /* Brand bar */
+    .cw-brandbar {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 4px;
+    }
+    .cw-brand-mark {
+      font-weight: 900; font-size: 15px; letter-spacing: -0.02em;
+      color: var(--primary); background: var(--bg);
+      border: 2px solid var(--primary); border-radius: 6px;
+      padding: 3px 8px;
+    }
+    .cw-brand-mark span { color: var(--accent); }
+    .cw-brand-sub { font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: .08em; }
+
+    /* Hero */
+    .cw-hero h1 {
+      font-size: clamp(26px, 4.5vw, 44px);
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+    }
+    .cw-hero h1 span { color: var(--primary); }
+    .cw-hero p { color: var(--text-light); margin-top: 8px; font-size: 16px; }
+
+    .cw-search-wrap { position: relative; max-width: 620px; margin-top: 20px; }
+    .cw-search-icon {
+      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+      color: var(--text-light); pointer-events: none; display: flex; align-items: center;
+      transition: color .2s;
+    }
+    .cw-search-wrap:focus-within .cw-search-icon { color: var(--primary); }
+    .cw-search-input {
+      width: 100%; padding: 15px 16px 15px 48px;
+      border: 1px solid var(--border); border-radius: 14px;
+      background: var(--bg); color: var(--text); font-size: 15px;
+      outline: none; box-shadow: 0 2px 12px -2px rgba(0,0,0,.06);
+      transition: border-color .2s, box-shadow .2s; font-family: inherit;
+    }
+    .cw-search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(77,20,140,.12); }
+    .cw-search-input::placeholder { color: var(--text-light); }
+
+    .cw-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .cw-section-head h2 { font-size: 17px; font-weight: 700; color: var(--text); }
+    .cw-clear-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; color: var(--primary);
+      font-size: 13px; font-weight: 500; cursor: pointer; padding: 0;
+      font-family: inherit; transition: opacity .2s;
+    }
+    .cw-clear-btn:hover { opacity: .7; }
+
+    /* Category grid */
+    .cw-cat-grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+    @media (min-width: 540px) { .cw-cat-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .cw-cat-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .cw-cat-card {
+      position: relative; height: 152px;
+      border-radius: 14px; overflow: hidden; cursor: pointer;
+      border: none; text-align: left; padding: 0;
+      box-shadow: 0 3px 14px -3px rgba(0,0,0,.12);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .cw-cat-card:hover { transform: scale(1.04); box-shadow: 0 10px 24px -5px rgba(0,0,0,.22); }
+    .cw-cat-card.cw-active { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+    .cw-cat-bg { position: absolute; inset: 0; }
+    .cw-cat-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.2) 55%, transparent 100%);
+    }
+    .cw-cat-inner {
+      position: absolute; inset: 0; padding: 18px;
+      display: flex; flex-direction: column; justify-content: space-between; color: #fff;
+    }
+    .cw-cat-icon-wrap {
+      align-self: flex-end; background: rgba(255,255,255,.2);
+      padding: 8px; border-radius: 9px; backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cw-cat-title { font-size: 16px; font-weight: 700; line-height: 1.2; text-shadow: 0 1px 3px rgba(0,0,0,.3); }
+
+    .cw-cat-1 .cw-cat-bg { background: linear-gradient(135deg, var(--primary) 0%, #0d0d0d 100%); }
+    .cw-cat-2 .cw-cat-bg { background: linear-gradient(135deg, var(--accent) 0%, #1c1c1c 100%); }
+    .cw-cat-3 .cw-cat-bg { background: linear-gradient(135deg, #2a2a2a 0%, var(--primary) 100%); }
+    .cw-cat-4 .cw-cat-bg { background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 65%, #000) 0%, #050505 100%); }
+    @supports not (background: color-mix(in srgb, red 50%, blue)) {
+      .cw-cat-4 .cw-cat-bg { background: linear-gradient(135deg, var(--accent) 0%, #050505 100%); }
+    }
+
+    /* Template section */
+    .cw-tpl-heading { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 20px; }
+    .cw-tpl-grid { display: grid; gap: 20px; grid-template-columns: 1fr; }
+    @media (min-width: 680px) { .cw-tpl-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1200px) { .cw-tpl-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+    .cw-tpl-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 3px 14px -3px rgba(0,0,0,.06); transition: box-shadow .3s;
+    }
+    .cw-tpl-card:hover { box-shadow: 0 10px 24px -5px rgba(77,20,140,.18); }
+
+    .cw-card-vis {
+      height: 120px; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .cw-card-vis::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,.04); }
+    .cw-card-vis-icon { opacity: .45; position: relative; }
+    .cw-trending-badge {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(255,255,255,.92); backdrop-filter: blur(4px);
+      font-size: 11px; font-weight: 700; padding: 3px 8px 3px 6px;
+      border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      color: #374151; display: flex; align-items: center; gap: 4px;
+    }
+
+    .cw-vis-blue   { background: #ede4f7; color: #4D148C; }
+    .cw-vis-green  { background: #d1fae5; color: #059669; }
+    .cw-vis-yellow { background: #ffe6cc; color: #cc5200; }
+    .cw-vis-red    { background: #fee2e2; color: #ef4444; }
+    .cw-vis-purple { background: #ede9fe; color: #7c3aed; }
+    .cw-vis-indigo { background: #e0e7ff; color: #4f46e5; }
+    .cw-vis-teal   { background: #ccfbf1; color: #0d9488; }
+
+    .cw-card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+    .cw-tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .cw-tag {
+      background: var(--bg-gray); color: var(--text-light);
+      font-size: 11px; font-weight: 600; padding: 2px 7px;
+      border-radius: 5px; border: 1px solid var(--border);
+    }
+    .cw-card-title {
+      font-weight: 700; font-size: 15px; color: var(--text); line-height: 1.35;
+      flex: 1; cursor: pointer; transition: color .2s;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .cw-card-title:hover { color: var(--primary); }
+
+    .cw-perf-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border);
+    }
+    .cw-perf-icon {
+      width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0;
+      background: rgba(255,102,0,.15); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cw-perf-label { font-size: 11px; color: var(--text-light); font-weight: 500; }
+    .cw-perf-value { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 1px; }
+
+    .cw-card-footer {
+      padding: 14px 18px; background: var(--bg-gray);
+      border-top: 1px solid var(--border); display: flex; gap: 10px;
+    }
+    .cw-btn-p, .cw-btn-s {
+      flex: 1; border-radius: 8px; padding: 8px 14px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      font-family: inherit;
+    }
+    .cw-btn-p { background: var(--primary); color: #fff; border: none; transition: opacity .2s; }
+    .cw-btn-p:hover { opacity: .82; }
+    .cw-btn-s { background: var(--bg); color: var(--text); border: 1px solid var(--border); transition: background .2s; }
+    .cw-btn-s:hover { background: var(--bg-gray); }
+
+    /* Empty state */
+    .cw-empty {
+      background: var(--bg); border: 2px dashed var(--border);
+      border-radius: 14px; padding: 48px; text-align: center;
+    }
+    .cw-empty-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--bg-gray); color: var(--text-light); margin-bottom: 14px;
+    }
+    .cw-empty h3 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .cw-empty p { color: var(--text-light); font-size: 14px; }
+
+    /* Sidebar */
+    .cw-sb-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px;
+      box-shadow: 0 2px 10px -2px rgba(0,0,0,.05);
+    }
+    .cw-sb-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .cw-sb-head h3 { font-size: 14px; font-weight: 700; color: var(--text); }
+    .cw-link-btn {
+      font-size: 12px; color: var(--primary); background: none; border: none;
+      cursor: pointer; font-weight: 500; font-family: inherit; transition: opacity .2s;
+    }
+    .cw-link-btn:hover { opacity: .7; text-decoration: underline; }
+
+    .cw-expert-list { display: flex; flex-wrap: wrap; gap: 7px; }
+    .cw-expert-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--bg-gray); border: 1px solid var(--border);
+      border-radius: 999px; padding: 3px 10px 3px 3px; cursor: pointer; transition: background .2s;
+    }
+    .cw-expert-chip:hover { background: var(--border); }
+    .cw-avatar {
+      width: 26px; height: 26px; border-radius: 50%; color: #fff;
+      font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .cw-expert-name { font-size: 12px; font-weight: 500; color: var(--text); }
+
+    .cw-resource-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .cw-resource-link {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-light); text-decoration: none; cursor: pointer; transition: color .2s;
+    }
+    .cw-resource-link:hover { color: var(--primary); }
+    .cw-resource-link svg { color: var(--border); flex-shrink: 0; transition: color .2s; }
+    .cw-resource-link:hover svg { color: var(--primary); }
+
+    /* Modal */
+    .cw-modal-overlay {
+      position: fixed; inset: 0; z-index: 60;
+      display: flex; align-items: center; justify-content: center; padding: 16px;
+    }
+    .cw-modal-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(17,24,39,.65); backdrop-filter: blur(4px); cursor: pointer;
+    }
+    .cw-modal {
+      position: relative; background: var(--bg); border-radius: 18px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,.3);
+      width: 100%; max-width: 760px; max-height: 88vh;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .cw-modal-hd {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--bg-gray); gap: 12px;
+    }
+    .cw-modal-hd-left { display: flex; align-items: flex-start; gap: 12px; }
+    .cw-modal-icon {
+      width: 40px; height: 40px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .cw-modal-title { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .cw-modal-tag-row { display: flex; gap: 8px; margin-top: 4px; }
+    .cw-modal-tag { font-size: 11px; color: var(--text-light); }
+    .cw-modal-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .cw-modal-dl-btn {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--primary); color: #fff; border: none; border-radius: 8px;
+      padding: 8px 14px; font-size: 12px; font-weight: 500; cursor: pointer;
+      font-family: inherit; transition: opacity .2s; white-space: nowrap;
+    }
+    .cw-modal-dl-btn:hover { opacity: .82; }
+    .cw-modal-close {
+      width: 34px; height: 34px; border-radius: 8px; border: none;
+      background: none; color: var(--text-light); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, color .2s; flex-shrink: 0;
+    }
+    .cw-modal-close:hover { background: var(--border); color: var(--text); }
+    .cw-modal-body {
+      flex: 1; overflow-y: auto; background: #e2e8f0; padding: 24px;
+      display: flex; justify-content: center;
+    }
+    @media (prefers-color-scheme: dark) { .cw-modal-body { background: #0f172a; } }
+
+    /* Mock document preview */
+    .cw-doc {
+      background: var(--bg); width: 100%; max-width: 560px;
+      padding: 36px 40px; border-radius: 3px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.15); min-height: 380px;
+    }
+    .cw-doc-hd { border-bottom: 2px solid var(--primary); padding-bottom: 14px; margin-bottom: 22px; }
+    .cw-doc-label { font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; }
+    .cw-doc-hd h2 { font-size: 17px; font-weight: 800; color: var(--text); line-height: 1.3; }
+    .cw-doc-sec { margin-bottom: 18px; }
+    .cw-doc-sec h3 { font-size: 10px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 8px; }
+    .cw-ph { height: 11px; background: var(--bg-gray); border-radius: 4px; margin-bottom: 7px; }
+    .cw-ph.m { width: 78%; }
+    .cw-ph.s { width: 55%; }
+    .cw-bar { height: 7px; background: var(--bg-gray); border-radius: 3px; margin-bottom: 6px; overflow: hidden; }
+    .cw-bar-fill { height: 100%; background: var(--primary); opacity: .28; border-radius: 3px; }
+    .cw-doc-note { text-align: center; color: var(--text-light); font-size: 12px; margin-top: 18px; font-style: italic; }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+  // ── Language detection ─────────────────────────────────────────────────
+  const LANG = (() => {
+    const l = navigator.language || '';
+    if (l.startsWith('de')) return 'de';
+    if (l.startsWith('fr')) return 'fr';
+    if (l.startsWith('es')) return 'es';
+    if (l.startsWith('ja')) return 'ja';
+    if (l === 'en-GB') return 'en-GB';
+    return 'en-US';
+  })();
+  document.documentElement.lang = LANG;
+
+  // ── Translations ───────────────────────────────────────────────────────
+  const T = {
+    'en-US': {
+      brandSub: 'Freight',
+      h1a: '', h1b: 'Freight Policy Library',
+      subtitle: 'Find, reference, and roll out FedEx Freight standard operating procedures.',
+      searchPh: 'Search freight SOPs, policies, or keywords…',
+      explore: 'Explore by Department',
+      clearFilter: 'Clear Filter',
+      trending: 'All Procedures',
+      tplsFor: '%s Procedures',
+      noResults: 'No procedures found',
+      noResultsSub: 'Try adjusting your search or department filter.',
+      experts: 'Policy Owners',
+      viewAll: 'View all',
+      resources: 'Quick Resources',
+      perf: 'Adoption',
+      download: 'Download',
+      details: 'Details',
+      trendingBadge: 'Popular',
+      dlPDF: 'Download PDF',
+      catS: 'Safety & Compliance', catA: 'Claims & Billing', catR: 'Dock Operations', catE: 'Driver Policies',
+      res1: 'Freight Brand & Style Guide', res2: 'DOT / FMCSA Compliance Hub', res3: 'Policy Index', res4: 'Process Templates',
+      docLabel: 'Document Preview', docExec: 'Purpose & Scope', docObj: 'Key Steps', docTime: 'Review Schedule',
+      docNote: 'Full document would load here in a live environment.',
+    },
+    'en-GB': {
+      brandSub: 'Freight',
+      h1a: '', h1b: 'Freight Policy Library',
+      subtitle: 'Find, reference, and roll out FedEx Freight standard operating procedures.',
+      searchPh: 'Search freight SOPs, policies, or keywords…',
+      explore: 'Explore by Department',
+      clearFilter: 'Clear Filter',
+      trending: 'All Procedures',
+      tplsFor: '%s Procedures',
+      noResults: 'No procedures found',
+      noResultsSub: 'Try adjusting your search or department filter.',
+      experts: 'Policy Owners',
+      viewAll: 'View all',
+      resources: 'Quick Resources',
+      perf: 'Adoption',
+      download: 'Download',
+      details: 'Details',
+      trendingBadge: 'Popular',
+      dlPDF: 'Download PDF',
+      catS: 'Safety & Compliance', catA: 'Claims & Billing', catR: 'Dock Operations', catE: 'Driver Policies',
+      res1: 'Freight Brand & Style Guide', res2: 'DOT / FMCSA Compliance Hub', res3: 'Policy Index', res4: 'Process Templates',
+      docLabel: 'Document Preview', docExec: 'Purpose & Scope', docObj: 'Key Steps', docTime: 'Review Schedule',
+      docNote: 'Full document would load here in a live environment.',
+    },
+    de: {
+      brandSub: 'Freight',
+      h1a: '', h1b: 'Richtlinienbibliothek',
+      subtitle: 'Standardarbeitsanweisungen von FedEx Freight finden, nachschlagen und einsetzen.',
+      searchPh: 'SOPs, Richtlinien oder Stichwörter suchen…',
+      explore: 'Nach Abteilung erkunden',
+      clearFilter: 'Filter löschen',
+      trending: 'Alle Verfahren',
+      tplsFor: '%s-Verfahren',
+      noResults: 'Keine Verfahren gefunden',
+      noResultsSub: 'Versuchen Sie, Suche oder Abteilungsfilter anzupassen.',
+      experts: 'Richtlinienverantwortliche',
+      viewAll: 'Alle anzeigen',
+      resources: 'Schnellzugriff',
+      perf: 'Nutzung',
+      download: 'Herunterladen',
+      details: 'Details',
+      trendingBadge: 'Beliebt',
+      dlPDF: 'PDF herunterladen',
+      catS: 'Sicherheit & Compliance', catA: 'Ansprüche & Abrechnung', catR: 'Dock-Betrieb', catE: 'Fahrerrichtlinien',
+      res1: 'Freight Marken- & Styleguide', res2: 'DOT/FMCSA Compliance', res3: 'Richtlinienindex', res4: 'Prozessvorlagen',
+      docLabel: 'Dokumentvorschau', docExec: 'Zweck & Geltungsbereich', docObj: 'Wichtige Schritte', docTime: 'Überprüfungsplan',
+      docNote: 'Das vollständige Dokument wird in einer Live-Umgebung hier angezeigt.',
+    },
+    fr: {
+      brandSub: 'Freight',
+      h1a: '', h1b: 'Bibliothèque de politiques',
+      subtitle: 'Trouvez, consultez et déployez les procédures opérationnelles standard de FedEx Freight.',
+      searchPh: "Rechercher des SOPs, politiques ou mots-clés…",
+      explore: 'Explorer par département',
+      clearFilter: 'Effacer le filtre',
+      trending: 'Toutes les procédures',
+      tplsFor: 'Procédures %s',
+      noResults: 'Aucune procédure trouvée',
+      noResultsSub: "Essayez d'ajuster votre recherche ou le filtre de département.",
+      experts: 'Responsables des politiques',
+      viewAll: 'Voir tout',
+      resources: 'Ressources rapides',
+      perf: 'Adoption',
+      download: 'Télécharger',
+      details: 'Détails',
+      trendingBadge: 'Populaire',
+      dlPDF: 'Télécharger le PDF',
+      catS: 'Sécurité & conformité', catA: 'Réclamations & facturation', catR: 'Opérations de quai', catE: 'Politiques chauffeurs',
+      res1: 'Guide de marque Freight', res2: 'Conformité DOT/FMCSA', res3: 'Index des politiques', res4: 'Modèles de processus',
+      docLabel: 'Aperçu du document', docExec: 'Objectif & périmètre', docObj: 'Étapes clés', docTime: 'Planning de révision',
+      docNote: "Le document complet se chargerait ici dans un environnement en direct.",
+    },
+    es: {
+      brandSub: 'Freight',
+      h1a: '', h1b: 'Biblioteca de políticas',
+      subtitle: 'Encuentra, consulta y despliega los procedimientos operativos estándar de FedEx Freight.',
+      searchPh: 'Buscar SOPs, políticas o palabras clave…',
+      explore: 'Explorar por departamento',
+      clearFilter: 'Limpiar filtro',
+      trending: 'Todos los procedimientos',
+      tplsFor: 'Procedimientos de %s',
+      noResults: 'No se encontraron procedimientos',
+      noResultsSub: 'Intenta ajustar la búsqueda o el filtro de departamento.',
+      experts: 'Responsables de políticas',
+      viewAll: 'Ver todo',
+      resources: 'Recursos rápidos',
+      perf: 'Adopción',
+      download: 'Descargar',
+      details: 'Detalles',
+      trendingBadge: 'Popular',
+      dlPDF: 'Descargar PDF',
+      catS: 'Seguridad & cumplimiento', catA: 'Reclamos & facturación', catR: 'Operaciones de muelle', catE: 'Políticas de conductores',
+      res1: 'Guía de marca Freight', res2: 'Cumplimiento DOT/FMCSA', res3: 'Índice de políticas', res4: 'Plantillas de procesos',
+      docLabel: 'Vista previa del documento', docExec: 'Propósito y alcance', docObj: 'Pasos clave', docTime: 'Calendario de revisión',
+      docNote: 'El documento completo se cargaría aquí en un entorno en vivo.',
+    },
+    ja: {
+      brandSub: 'Freight',
+      h1a: '', h1b: 'ポリシーライブラリ',
+      subtitle: 'FedEx Freightの標準作業手順書を検索・参照・展開しましょう。',
+      searchPh: 'SOP、ポリシー、またはキーワードを検索…',
+      explore: '部門別で探す',
+      clearFilter: 'フィルターをクリア',
+      trending: 'すべての手順書',
+      tplsFor: '%sの手順書',
+      noResults: '手順書が見つかりません',
+      noResultsSub: '検索条件や部門フィルターを調整してください。',
+      experts: 'ポリシー責任者',
+      viewAll: 'すべて表示',
+      resources: 'クイックリソース',
+      perf: '利用状況',
+      download: 'ダウンロード',
+      details: '詳細',
+      trendingBadge: '人気',
+      dlPDF: 'PDFをダウンロード',
+      catS: '安全・コンプライアンス', catA: 'クレーム・請求', catR: 'ドック業務', catE: 'ドライバー方針',
+      res1: 'Freight ブランドガイド', res2: 'DOT/FMCSA コンプライアンス', res3: 'ポリシー索引', res4: 'プロセステンプレート',
+      docLabel: 'ドキュメントプレビュー', docExec: '目的・適用範囲', docObj: '主要ステップ', docTime: '見直しスケジュール',
+      docNote: 'ライブ環境では完全な文書がここに表示されます。',
+    },
+  };
+  const t = T[LANG] || T['en-US'];
+
+  // ── Date helpers ───────────────────────────────────────────────────────
+  const now = new Date();
+  const qNum = Math.floor(now.getMonth() / 3) + 1;
+  const prevQNum = qNum === 1 ? 4 : qNum - 1;
+  const prevQYear = qNum === 1 ? now.getFullYear() - 1 : now.getFullYear();
+  const prevQ = 'Q' + prevQNum + ' ' + prevQYear;
+  const curQ  = 'Q' + qNum + ' ' + now.getFullYear();
+
+  // ── applySBBrand ───────────────────────────────────────────────────────
+  function applySBBrand() {
+    try {
+      let v = getComputedStyle(document.documentElement).getPropertyValue('--sb-brand').trim();
+      if (!v && window.parent !== window) {
+        v = getComputedStyle(window.parent.document.documentElement).getPropertyValue('--sb-brand').trim();
+      }
+      if (v) document.documentElement.style.setProperty('--primary', v);
+    } catch (e) {}
+  }
+
+  // ── Inline SVG icons ───────────────────────────────────────────────────
+  const ICONS = {
+    ShieldCheck: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+    ReceiptText: '<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h5"/>',
+    Warehouse: '<path d="M22 8.35V20a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V8.35a1 1 0 0 1 .53-.88l9-4.7a1 1 0 0 1 .94 0l9 4.7a1 1 0 0 1 .53.88Z"/><path d="M6 18h12"/><path d="M6 14h12"/><path d="M6 10h12"/>',
+    Truck: '<path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+    Search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>',
+    XCircle: '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+    FileText: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+    Download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+    TrendingUp: '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+    Award: '<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>',
+    Link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+    SearchX: '<path d="m13.5 8.5-5 5"/><path d="m8.5 8.5 5 5"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>',
+    X: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  };
+  function ic(name, size, cls) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"' + (cls ? ' class="' + cls + '"' : '') + ' aria-hidden="true">' + (ICONS[name] || '') + '</svg>';
+  }
+
+  // ── Data ───────────────────────────────────────────────────────────────
+  const CATS = [
+    { id: 'safety',  tKey: 'catS', icon: 'ShieldCheck', cls: 'cw-cat-1' },
+    { id: 'claims',  tKey: 'catA', icon: 'ReceiptText', cls: 'cw-cat-2' },
+    { id: 'dock',    tKey: 'catR', icon: 'Warehouse',   cls: 'cw-cat-3' },
+    { id: 'driver',  tKey: 'catE', icon: 'Truck',       cls: 'cw-cat-4' },
+  ];
+
+  const TEMPLATES = [
+    { id: 1, cat: 'safety', title: 'Hazmat Handling & Placarding Protocol',   tags: ['Safety', 'Hazmat'],       perf: '24 terminals · ' + prevQ, vis: 'cw-vis-blue' },
+    { id: 2, cat: 'driver', title: 'Driver Pre-Trip Inspection Checklist',    tags: ['Driver', 'DOT'],          perf: '38 terminals · ' + prevQ, vis: 'cw-vis-green' },
+    { id: 3, cat: 'claims', title: 'Freight Claims & Damage Resolution',      tags: ['Claims', 'Customer'],     perf: '31 terminals · ' + prevQ, vis: 'cw-vis-yellow' },
+    { id: 4, cat: 'dock',   title: 'Dock Loading & Freight Securement',       tags: ['Dock', 'Safety'],         perf: '19 terminals · ' + curQ,  vis: 'cw-vis-red' },
+    { id: 5, cat: 'claims', title: 'Bill of Lading Processing Procedure',     tags: ['Billing', 'Compliance'],  perf: '27 terminals · ' + prevQ, vis: 'cw-vis-purple' },
+    { id: 6, cat: 'driver', title: 'Hours of Service & ELD Compliance',       tags: ['Driver', 'FMCSA'],        perf: '15 terminals · ' + prevQ, vis: 'cw-vis-indigo' },
+    { id: 7, cat: 'dock',   title: 'Cross-Dock Transfer & Sorting Standards', tags: ['Dock', 'Operations'],     perf: '22 terminals · ' + prevQ, vis: 'cw-vis-teal' },
+  ];
+
+  const EXPERTS = [
+    { name: 'Renee Castillo', initials: 'RC', color: 'var(--primary)' },
+    { name: 'Owen Fitzgerald', initials: 'OF', color: 'var(--accent)' },
+    { name: 'Priya Anand',    initials: 'PA', color: 'var(--success)' },
+    { name: 'Marcus Lee',     initials: 'ML', color: 'var(--danger)' },
+  ];
+
+  const RESOURCES = ['res1', 'res2', 'res3', 'res4'];
+
+  // ── State ──────────────────────────────────────────────────────────────
+  let activeCat = 'all';
+  let query = '';
+  let openModal = null;
+
+  // ── Helpers ────────────────────────────────────────────────────────────
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function getFiltered() {
+    return TEMPLATES.filter(function(tpl) {
+      const catOk = activeCat === 'all' || tpl.cat === activeCat;
+      const q = query.toLowerCase();
+      const searchOk = !q ||
+        tpl.title.toLowerCase().indexOf(q) !== -1 ||
+        tpl.tags.some(function(tag) { return tag.toLowerCase().indexOf(q) !== -1; });
+      return catOk && searchOk;
+    });
+  }
+
+  // ── Render pieces ──────────────────────────────────────────────────────
+  function renderCatCard(cat) {
+    const active = activeCat === cat.id;
+    return '<button class="cw-cat-card ' + cat.cls + (active ? ' cw-active' : '') +
+      '" data-cat="' + cat.id + '" type="button" aria-pressed="' + active + '">' +
+      '<div class="cw-cat-bg"></div>' +
+      '<div class="cw-cat-overlay"></div>' +
+      '<div class="cw-cat-inner">' +
+        '<div class="cw-cat-icon-wrap">' + ic(cat.icon, 22) + '</div>' +
+        '<div class="cw-cat-title">' + esc(t[cat.tKey]) + '</div>' +
+      '</div></button>';
+  }
+
+  function renderTplCard(tpl) {
+    return '<div class="cw-tpl-card">' +
+      '<div class="cw-card-vis ' + tpl.vis + '">' +
+        '<span class="cw-card-vis-icon">' + ic('FileText', 46) + '</span>' +
+        '<div class="cw-trending-badge">' + ic('TrendingUp', 11) + esc(t.trendingBadge) + '</div>' +
+      '</div>' +
+      '<div class="cw-card-body">' +
+        '<div class="cw-tag-row">' +
+          tpl.tags.map(function(tag) { return '<span class="cw-tag">' + esc(tag) + '</span>'; }).join('') +
+        '</div>' +
+        '<div class="cw-card-title" data-modal="' + tpl.id + '" role="button" tabindex="0">' + esc(tpl.title) + '</div>' +
+        '<div class="cw-perf-row">' +
+          '<div class="cw-perf-icon">' + ic('Award', 15) + '</div>' +
+          '<div>' +
+            '<div class="cw-perf-label">' + esc(t.perf) + '</div>' +
+            '<div class="cw-perf-value">' + esc(tpl.perf) + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cw-card-footer">' +
+        '<button class="cw-btn-p" type="button">' + ic('Download', 14) + esc(t.download) + '</button>' +
+        '<button class="cw-btn-s" data-modal="' + tpl.id + '" type="button">' + esc(t.details) + '</button>' +
+      '</div></div>';
+  }
+
+  function renderModal(tpl) {
+    return '<div class="cw-modal-overlay" role="dialog" aria-modal="true">' +
+      '<div class="cw-modal-backdrop" id="cw-backdrop"></div>' +
+      '<div class="cw-modal">' +
+        '<div class="cw-modal-hd">' +
+          '<div class="cw-modal-hd-left">' +
+            '<div class="cw-modal-icon ' + tpl.vis + '">' + ic('FileText', 20) + '</div>' +
+            '<div>' +
+              '<div class="cw-modal-title">' + esc(tpl.title) + '</div>' +
+              '<div class="cw-modal-tag-row">' +
+                tpl.tags.map(function(tag) { return '<span class="cw-modal-tag">' + esc(tag) + '</span>'; }).join('') +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="cw-modal-actions">' +
+            '<button class="cw-modal-dl-btn" type="button">' + ic('Download', 14) + esc(t.dlPDF) + '</button>' +
+            '<button class="cw-modal-close" id="cw-modal-close" type="button" aria-label="Close">' + ic('X', 18) + '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="cw-modal-body">' +
+          '<div class="cw-doc">' +
+            '<div class="cw-doc-hd">' +
+              '<div class="cw-doc-label">' + esc(t.docLabel) + '</div>' +
+              '<h2>' + esc(tpl.title) + '</h2>' +
+            '</div>' +
+            '<div class="cw-doc-sec">' +
+              '<h3>' + esc(t.docExec) + '</h3>' +
+              '<div class="cw-ph"></div><div class="cw-ph m"></div><div class="cw-ph s"></div>' +
+            '</div>' +
+            '<div class="cw-doc-sec">' +
+              '<h3>' + esc(t.docObj) + '</h3>' +
+              '<div class="cw-bar"><div class="cw-bar-fill" style="width:74%"></div></div>' +
+              '<div class="cw-bar"><div class="cw-bar-fill" style="width:52%"></div></div>' +
+              '<div class="cw-bar"><div class="cw-bar-fill" style="width:63%"></div></div>' +
+            '</div>' +
+            '<div class="cw-doc-sec">' +
+              '<h3>' + esc(t.docTime) + '</h3>' +
+              '<div class="cw-ph"></div><div class="cw-ph m"></div>' +
+            '</div>' +
+            '<p class="cw-doc-note">' + esc(t.docNote) + '</p>' +
+          '</div>' +
+        '</div>' +
+      '</div></div>';
+  }
+
+  // ── Full render ────────────────────────────────────────────────────────
+  function render() {
+    const filtered = getFiltered();
+    const activeCatObj = CATS.find(function(c) { return c.id === activeCat; });
+    const heading = activeCat === 'all'
+      ? t.trending
+      : t.tplsFor.replace('%s', t[activeCatObj.tKey]);
+    const h1 = (t.h1a ? esc(t.h1a) + ' ' : '') + '<span>' + esc(t.h1b) + '</span>';
+
+    document.getElementById('app').innerHTML =
+      '<main class="cw-main">' +
+
+        '<div class="cw-content">' +
+
+          '<section class="cw-hero">' +
+            '<div class="cw-brandbar">' +
+              '<div class="cw-brand-mark">Fed<span>Ex</span></div>' +
+              '<div class="cw-brand-sub">' + esc(t.brandSub) + '</div>' +
+            '</div>' +
+            '<div><h1>' + h1 + '</h1><p>' + esc(t.subtitle) + '</p></div>' +
+            '<div class="cw-search-wrap">' +
+              '<span class="cw-search-icon">' + ic('Search', 18) + '</span>' +
+              '<input id="cw-search" class="cw-search-input" type="text" autocomplete="off"' +
+                ' placeholder="' + esc(t.searchPh) + '" value="' + esc(query) +
+                '" aria-label="' + esc(t.searchPh) + '">' +
+            '</div>' +
+          '</section>' +
+
+          '<section>' +
+            '<div class="cw-section-head">' +
+              '<h2>' + esc(t.explore) + '</h2>' +
+              (activeCat !== 'all'
+                ? '<button class="cw-clear-btn" id="cw-clear" type="button">' + ic('XCircle', 14) + esc(t.clearFilter) + '</button>'
+                : '') +
+            '</div>' +
+            '<div class="cw-cat-grid">' + CATS.map(renderCatCard).join('') + '</div>' +
+          '</section>' +
+
+          '<section>' +
+            '<div class="cw-tpl-heading">' + esc(heading) + '</div>' +
+            (filtered.length > 0
+              ? '<div class="cw-tpl-grid">' + filtered.map(renderTplCard).join('') + '</div>'
+              : '<div class="cw-empty">' +
+                  '<div class="cw-empty-icon">' + ic('SearchX', 30) + '</div>' +
+                  '<h3>' + esc(t.noResults) + '</h3>' +
+                  '<p>' + esc(t.noResultsSub) + '</p>' +
+                '</div>') +
+          '</section>' +
+
+        '</div>' +
+
+        '<div class="cw-sidebar">' +
+
+          '<div class="cw-sb-card">' +
+            '<div class="cw-sb-head"><h3>' + esc(t.experts) + '</h3>' +
+              '<button class="cw-link-btn" type="button">' + esc(t.viewAll) + '</button></div>' +
+            '<div class="cw-expert-list">' +
+              EXPERTS.map(function(e) {
+                const short = e.name.split(' ')[0] + ' ' + e.name.split(' ')[1][0] + '.';
+                return '<div class="cw-expert-chip">' +
+                  '<div class="cw-avatar" style="background:' + e.color + '">' + esc(e.initials) + '</div>' +
+                  '<span class="cw-expert-name">' + esc(short) + '</span>' +
+                  '</div>';
+              }).join('') +
+            '</div>' +
+          '</div>' +
+
+          '<div class="cw-sb-card">' +
+            '<div class="cw-sb-head"><h3>' + esc(t.resources) + '</h3></div>' +
+            '<ul class="cw-resource-list">' +
+              RESOURCES.map(function(key) {
+                return '<li><a href="#" class="cw-resource-link" onclick="return false">' +
+                  ic('Link', 13) + esc(t[key]) + '</a></li>';
+              }).join('') +
+            '</ul>' +
+          '</div>' +
+
+        '</div>' +
+
+      '</main>' +
+
+      (openModal ? renderModal(openModal) : '');
+
+    attachListeners();
+  }
+
+  // ── Event wiring ───────────────────────────────────────────────────────
+  function attachListeners() {
+    const searchEl = document.getElementById('cw-search');
+    if (searchEl) {
+      searchEl.addEventListener('input', function(e) { query = e.target.value; render(); });
+      if (query) { searchEl.focus(); const l = searchEl.value.length; searchEl.setSelectionRange(l, l); }
+    }
+
+    const clearBtn = document.getElementById('cw-clear');
+    if (clearBtn) clearBtn.addEventListener('click', function() { activeCat = 'all'; render(); });
+
+    document.querySelectorAll('[data-cat]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        activeCat = activeCat === btn.dataset.cat ? 'all' : btn.dataset.cat;
+        render();
+      });
+    });
+
+    document.querySelectorAll('[data-modal]').forEach(function(el) {
+      el.addEventListener('click', function() {
+        openModal = TEMPLATES.find(function(tpl) { return tpl.id === parseInt(el.dataset.modal, 10); }) || null;
+        render();
+      });
+      el.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+      });
+    });
+
+    const closeBtn = document.getElementById('cw-modal-close');
+    if (closeBtn) closeBtn.addEventListener('click', function() { openModal = null; render(); });
+
+    const backdrop = document.getElementById('cw-backdrop');
+    if (backdrop) backdrop.addEventListener('click', function() { openModal = null; render(); });
+
+    document.onkeydown = function(e) {
+      if (e.key === 'Escape' && openModal) { openModal = null; render(); }
+    };
+  }
+
+  // ── Init ───────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    applySBBrand();
+    render();
+  });
+</script>
+</body>
+</html>
