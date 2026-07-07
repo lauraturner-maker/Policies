@@ -333,13 +333,23 @@
     .cw-doc-hd { border-bottom: 2px solid var(--primary); padding-bottom: 14px; margin-bottom: 22px; }
     .cw-doc-label { font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; }
     .cw-doc-hd h2 { font-size: 17px; font-weight: 800; color: var(--text); line-height: 1.3; }
-    .cw-doc-sec { margin-bottom: 18px; }
+    .cw-doc-sec { margin-bottom: 20px; }
     .cw-doc-sec h3 { font-size: 10px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 8px; }
-    .cw-ph { height: 11px; background: var(--bg-gray); border-radius: 4px; margin-bottom: 7px; }
-    .cw-ph.m { width: 78%; }
-    .cw-ph.s { width: 55%; }
-    .cw-bar { height: 7px; background: var(--bg-gray); border-radius: 3px; margin-bottom: 6px; overflow: hidden; }
-    .cw-bar-fill { height: 100%; background: var(--primary); opacity: .28; border-radius: 3px; }
+    .cw-doc-p { font-size: 13px; line-height: 1.6; color: var(--text); }
+    .cw-doc-steps { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .cw-doc-steps li {
+      font-size: 13px; line-height: 1.5; color: var(--text);
+      padding-left: 26px; position: relative;
+    }
+    .cw-doc-steps li .cw-step-num {
+      position: absolute; left: 0; top: 1px;
+      width: 18px; height: 18px; border-radius: 5px;
+      background: var(--primary); color: #fff; font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cw-doc-meta { display: flex; flex-wrap: wrap; font-size: 12px; color: var(--text-light); }
+    .cw-doc-meta span { display: inline-flex; align-items: center; gap: 5px; margin-right: 18px; margin-bottom: 4px; }
+    .cw-doc-meta b { color: var(--text); font-weight: 600; }
     .cw-doc-note { text-align: center; color: var(--text-light); font-size: 12px; margin-top: 18px; font-style: italic; }
   </style>
 </head>
@@ -382,6 +392,7 @@
       catS: 'Safety & Compliance', catA: 'Claims & Billing', catR: 'Dock Operations', catE: 'Driver Policies',
       res1: 'Freight Brand & Style Guide', res2: 'DOT / FMCSA Compliance Hub', res3: 'Policy Index', res4: 'Process Templates',
       docLabel: 'Document Preview', docExec: 'Purpose & Scope', docObj: 'Key Steps', docTime: 'Review Schedule',
+      docOwner: 'Owner',
       docNote: 'Full document would load here in a live environment.',
     },
     'en-GB': {
@@ -406,6 +417,7 @@
       catS: 'Safety & Compliance', catA: 'Claims & Billing', catR: 'Dock Operations', catE: 'Driver Policies',
       res1: 'Freight Brand & Style Guide', res2: 'DOT / FMCSA Compliance Hub', res3: 'Policy Index', res4: 'Process Templates',
       docLabel: 'Document Preview', docExec: 'Purpose & Scope', docObj: 'Key Steps', docTime: 'Review Schedule',
+      docOwner: 'Owner',
       docNote: 'Full document would load here in a live environment.',
     },
     de: {
@@ -430,6 +442,7 @@
       catS: 'Sicherheit & Compliance', catA: 'Ansprüche & Abrechnung', catR: 'Dock-Betrieb', catE: 'Fahrerrichtlinien',
       res1: 'Freight Marken- & Styleguide', res2: 'DOT/FMCSA Compliance', res3: 'Richtlinienindex', res4: 'Prozessvorlagen',
       docLabel: 'Dokumentvorschau', docExec: 'Zweck & Geltungsbereich', docObj: 'Wichtige Schritte', docTime: 'Überprüfungsplan',
+      docOwner: 'Verantwortlich',
       docNote: 'Das vollständige Dokument wird in einer Live-Umgebung hier angezeigt.',
     },
     fr: {
@@ -454,6 +467,7 @@
       catS: 'Sécurité & conformité', catA: 'Réclamations & facturation', catR: 'Opérations de quai', catE: 'Politiques chauffeurs',
       res1: 'Guide de marque Freight', res2: 'Conformité DOT/FMCSA', res3: 'Index des politiques', res4: 'Modèles de processus',
       docLabel: 'Aperçu du document', docExec: 'Objectif & périmètre', docObj: 'Étapes clés', docTime: 'Planning de révision',
+      docOwner: 'Responsable',
       docNote: "Le document complet se chargerait ici dans un environnement en direct.",
     },
     es: {
@@ -478,6 +492,7 @@
       catS: 'Seguridad & cumplimiento', catA: 'Reclamos & facturación', catR: 'Operaciones de muelle', catE: 'Políticas de conductores',
       res1: 'Guía de marca Freight', res2: 'Cumplimiento DOT/FMCSA', res3: 'Índice de políticas', res4: 'Plantillas de procesos',
       docLabel: 'Vista previa del documento', docExec: 'Propósito y alcance', docObj: 'Pasos clave', docTime: 'Calendario de revisión',
+      docOwner: 'Responsable',
       docNote: 'El documento completo se cargaría aquí en un entorno en vivo.',
     },
     ja: {
@@ -502,6 +517,7 @@
       catS: '安全・コンプライアンス', catA: 'クレーム・請求', catR: 'ドック業務', catE: 'ドライバー方針',
       res1: 'Freight ブランドガイド', res2: 'DOT/FMCSA コンプライアンス', res3: 'ポリシー索引', res4: 'プロセステンプレート',
       docLabel: 'ドキュメントプレビュー', docExec: '目的・適用範囲', docObj: '主要ステップ', docTime: '見直しスケジュール',
+      docOwner: '責任者',
       docNote: 'ライブ環境では完全な文書がここに表示されます。',
     },
   };
@@ -555,13 +571,97 @@
   ];
 
   const TEMPLATES = [
-    { id: 1, cat: 'safety', title: 'Hazmat Handling & Placarding Protocol',   tags: ['Safety', 'Hazmat'],       perf: '24 terminals · ' + prevQ, vis: 'cw-vis-blue' },
-    { id: 2, cat: 'driver', title: 'Driver Pre-Trip Inspection Checklist',    tags: ['Driver', 'DOT'],          perf: '38 terminals · ' + prevQ, vis: 'cw-vis-green' },
-    { id: 3, cat: 'claims', title: 'Freight Claims & Damage Resolution',      tags: ['Claims', 'Customer'],     perf: '31 terminals · ' + prevQ, vis: 'cw-vis-yellow' },
-    { id: 4, cat: 'dock',   title: 'Dock Loading & Freight Securement',       tags: ['Dock', 'Safety'],         perf: '19 terminals · ' + curQ,  vis: 'cw-vis-red' },
-    { id: 5, cat: 'claims', title: 'Bill of Lading Processing Procedure',     tags: ['Billing', 'Compliance'],  perf: '27 terminals · ' + prevQ, vis: 'cw-vis-purple' },
-    { id: 6, cat: 'driver', title: 'Hours of Service & ELD Compliance',       tags: ['Driver', 'FMCSA'],        perf: '15 terminals · ' + prevQ, vis: 'cw-vis-indigo' },
-    { id: 7, cat: 'dock',   title: 'Cross-Dock Transfer & Sorting Standards', tags: ['Dock', 'Operations'],     perf: '22 terminals · ' + prevQ, vis: 'cw-vis-teal' },
+    { id: 1, cat: 'safety', title: 'Hazmat Handling & Placarding Protocol',   tags: ['Safety', 'Hazmat'],       perf: '24 terminals · ' + prevQ, vis: 'cw-vis-blue',
+      content: {
+        purpose: 'Defines requirements for identifying, handling, loading, and placarding hazardous materials (hazmat) shipments at FedEx Freight service centers, in accordance with 49 CFR Parts 100–185. Applies to all dock personnel, drivers, and hazmat-certified supervisors handling regulated shipments.',
+        steps: [
+          'Verify the shipping paper matches the hazmat class, UN number, and packing group on the shipment label before acceptance.',
+          'Confirm packaging is undamaged and properly closed; reject any leaking or non-compliant containers.',
+          'Segregate incompatible hazard classes on the dock per the segregation chart posted at each hazmat staging area.',
+          'Apply DOT placards to the trailer when required and record the placard number on the load manifest.',
+          'Have a hazmat-certified employee complete final load verification and sign the hazmat checklist before dispatch.'
+        ],
+        owner: 'Priya Anand, Safety & Compliance', version: '4.2', reviewed: 'March 2026', cycle: 'Annual'
+      }
+    },
+    { id: 2, cat: 'driver', title: 'Driver Pre-Trip Inspection Checklist',    tags: ['Driver', 'DOT'],          perf: '38 terminals · ' + prevQ, vis: 'cw-vis-green',
+      content: {
+        purpose: 'Establishes the mandatory pre-trip inspection steps every driver must complete before operating a tractor-trailer, satisfying FMCSA 49 CFR 396.13 requirements and reducing on-road mechanical failures.',
+        steps: [
+          'Walk the full perimeter of the tractor and trailer, checking tires, lights, and reflectors for damage.',
+          'Test air brake system pressure build-up and low-air warning devices before releasing the parking brake.',
+          'Inspect coupling devices, fifth wheel, and landing gear for proper engagement and lubrication.',
+          'Check fluid levels (oil, coolant, washer fluid) and look for visible leaks under the vehicle.',
+          'Log all findings on the Driver Vehicle Inspection Report (DVIR) and report defects to dispatch before departure.'
+        ],
+        owner: 'Owen Fitzgerald, Driver Policies', version: '3.0', reviewed: 'January 2026', cycle: 'Annual'
+      }
+    },
+    { id: 3, cat: 'claims', title: 'Freight Claims & Damage Resolution',      tags: ['Claims', 'Customer'],     perf: '31 terminals · ' + prevQ, vis: 'cw-vis-yellow',
+      content: {
+        purpose: 'Outlines the process for receiving, investigating, and resolving customer freight loss or damage claims, ensuring compliance with the Carmack Amendment and consistent turnaround across all service centers.',
+        steps: [
+          'Log the claim in the claims portal within 24 hours of receipt, attaching the bill of lading and delivery receipt.',
+          'Notify the originating and destination terminals to hold any damaged freight for inspection.',
+          'Complete a damage inspection report with photos within 5 business days of the claim being filed.',
+          'Determine liability based on exception notations, packaging condition, and carrier handling records.',
+          'Issue a settlement offer or denial letter to the customer within 30 days, per company claims-handling policy.'
+        ],
+        owner: 'Renee Castillo, Claims & Billing', version: '2.5', reviewed: 'April 2026', cycle: 'Annual'
+      }
+    },
+    { id: 4, cat: 'dock',   title: 'Dock Loading & Freight Securement',       tags: ['Dock', 'Safety'],         perf: '19 terminals · ' + curQ,  vis: 'cw-vis-red',
+      content: {
+        purpose: 'Sets minimum standards for loading sequence, weight distribution, and load securement on LTL trailers to prevent in-transit shifting, dock injuries, and DOT securement violations.',
+        steps: [
+          'Sequence freight by delivery stop, loading last-off shipments closest to the trailer doors.',
+          'Distribute weight evenly across the trailer axles, keeping heavier freight low and centered.',
+          'Apply load bars, straps, or dunnage bags to secure freight per the commodity-specific securement chart.',
+          'Block and brace unstable or irregularly shaped freight to prevent shifting during transit.',
+          'Complete the load diagram and have the shift lead verify securement before sealing the trailer.'
+        ],
+        owner: 'Priya Anand, Safety & Compliance', version: '1.8', reviewed: 'May 2026', cycle: 'Semi-annual'
+      }
+    },
+    { id: 5, cat: 'claims', title: 'Bill of Lading Processing Procedure',     tags: ['Billing', 'Compliance'],  perf: '27 terminals · ' + prevQ, vis: 'cw-vis-purple',
+      content: {
+        purpose: 'Describes how to accept, verify, and process bills of lading (BOL) at pickup and delivery to ensure accurate freight billing, correct weight and class, and clean chain-of-custody documentation.',
+        steps: [
+          'Verify shipper-provided piece count, weight, and NMFC class against the physical shipment at pickup.',
+          'Note any discrepancies or damage as exceptions directly on the BOL before the driver signs.',
+          'Scan and upload the signed BOL to the shipment record within the same business day.',
+          'Route BOLs with weight or class discrepancies to re-weigh/re-class for billing correction.',
+          'Archive the finalized BOL for the standard 7-year document retention period.'
+        ],
+        owner: 'Renee Castillo, Claims & Billing', version: '3.1', reviewed: 'February 2026', cycle: 'Annual'
+      }
+    },
+    { id: 6, cat: 'driver', title: 'Hours of Service & ELD Compliance',       tags: ['Driver', 'FMCSA'],        perf: '15 terminals · ' + prevQ, vis: 'cw-vis-indigo',
+      content: {
+        purpose: 'Ensures all commercial drivers comply with FMCSA Hours of Service (HOS) regulations using Electronic Logging Devices (ELD), covering duty status changes, required breaks, and violation reporting.',
+        steps: [
+          'Log in to the ELD at the start of each shift and select the correct duty status before moving the vehicle.',
+          'Take the mandatory 30-minute break before 8 cumulative hours of driving time.',
+          'Do not exceed 11 hours of driving or 14 hours on-duty within a single work shift.',
+          'Certify daily logs for accuracy at the end of each shift and correct any missed status changes promptly.',
+          'Report ELD malfunctions to dispatch immediately and revert to paper logs per the malfunction procedure.'
+        ],
+        owner: 'Owen Fitzgerald, Driver Policies', version: '2.2', reviewed: 'December 2025', cycle: 'Annual'
+      }
+    },
+    { id: 7, cat: 'dock',   title: 'Cross-Dock Transfer & Sorting Standards', tags: ['Dock', 'Operations'],     perf: '22 terminals · ' + prevQ, vis: 'cw-vis-teal',
+      content: {
+        purpose: 'Defines how inbound freight is sorted and transferred to outbound trailers at cross-dock terminals to minimize dwell time, missorts, and rehandling.',
+        steps: [
+          'Scan each inbound piece at the dock door to confirm routing and destination terminal.',
+          'Stage freight in the assigned door zone according to the daily load plan.',
+          'Flag over/short/damaged (OS&D) freight immediately and route it to the OS&D cage.',
+          'Load outbound trailers in stop sequence, confirming piece counts against the manifest.',
+          'Close out the door and submit the dock sort report before the trailer departs.'
+        ],
+        owner: 'Priya Anand, Safety & Compliance', version: '1.4', reviewed: 'March 2026', cycle: 'Semi-annual'
+      }
+    },
   ];
 
   const EXPERTS = [
@@ -659,17 +759,24 @@
             '</div>' +
             '<div class="cw-doc-sec">' +
               '<h3>' + esc(t.docExec) + '</h3>' +
-              '<div class="cw-ph"></div><div class="cw-ph m"></div><div class="cw-ph s"></div>' +
+              '<p class="cw-doc-p">' + esc(tpl.content.purpose) + '</p>' +
             '</div>' +
             '<div class="cw-doc-sec">' +
               '<h3>' + esc(t.docObj) + '</h3>' +
-              '<div class="cw-bar"><div class="cw-bar-fill" style="width:74%"></div></div>' +
-              '<div class="cw-bar"><div class="cw-bar-fill" style="width:52%"></div></div>' +
-              '<div class="cw-bar"><div class="cw-bar-fill" style="width:63%"></div></div>' +
+              '<ol class="cw-doc-steps">' +
+                tpl.content.steps.map(function(step, i) {
+                  return '<li><span class="cw-step-num">' + (i + 1) + '</span>' + esc(step) + '</li>';
+                }).join('') +
+              '</ol>' +
             '</div>' +
             '<div class="cw-doc-sec">' +
               '<h3>' + esc(t.docTime) + '</h3>' +
-              '<div class="cw-ph"></div><div class="cw-ph m"></div>' +
+              '<div class="cw-doc-meta">' +
+                '<span>' + esc(t.docOwner) + ': <b>' + esc(tpl.content.owner) + '</b></span>' +
+                '<span>Version: <b>' + esc(tpl.content.version) + '</b></span>' +
+                '<span>Last reviewed: <b>' + esc(tpl.content.reviewed) + '</b></span>' +
+                '<span>Review cycle: <b>' + esc(tpl.content.cycle) + '</b></span>' +
+              '</div>' +
             '</div>' +
             '<p class="cw-doc-note">' + esc(t.docNote) + '</p>' +
           '</div>' +
